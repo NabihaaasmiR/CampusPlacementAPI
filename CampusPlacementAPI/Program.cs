@@ -79,6 +79,11 @@ builder.Services.AddScoped<IJobOpeningService, JobOpeningService>();
 builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 
+builder.Services.AddScoped<IRecruitmentDriveRepository, RecruitmentDriveRepository>();
+builder.Services.AddScoped<IRecruitmentDriveService, RecruitmentDriveService>();
+
+builder.Services.AddScoped<IReportService, ReportService>();
+
 // 5. Controllers and OpenAPI / Scalar Documentation
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

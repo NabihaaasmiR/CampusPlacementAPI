@@ -6,12 +6,11 @@ namespace CampusPlacementAPI.Models
     public enum ApplicationStatus
     {
         Applied,
-        UnderReview,
         Shortlisted,
-        Rejected,
         InterviewScheduled,
-        Selected,
-        NotSelected,
+        Offered,
+        Hired,
+        Rejected,
         Withdrawn
     }
 

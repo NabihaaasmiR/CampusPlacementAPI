@@ -3,6 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CampusPlacementAPI.Models
 {
+    public enum DriveStatus
+    {
+        Scheduled,
+        Ongoing,
+        Completed,
+        Cancelled
+    }
+
     public class RecruitmentDrive
     {
         [Key]
@@ -24,9 +32,10 @@ namespace CampusPlacementAPI.Models
         [MaxLength(255)]
         public string? Venue { get; set; }
 
+        [MaxLength(1000)]
         public string? Description { get; set; }
 
         [Required]
-        public CollegeStatus Status { get; set; } = CollegeStatus.Pending;
+        public DriveStatus Status { get; set; } = DriveStatus.Scheduled;
     }
 }
