@@ -335,6 +335,9 @@ namespace CampusPlacementAPI.Migrations
                     b.Property<int>("InterviewRoundId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("InterviewRoundId1")
+                        .HasColumnType("int");
+
                     b.Property<int?>("JobApplicationApplicationId")
                         .HasColumnType("int");
 
@@ -357,6 +360,8 @@ namespace CampusPlacementAPI.Migrations
                     b.HasIndex("ApplicationId");
 
                     b.HasIndex("InterviewRoundId");
+
+                    b.HasIndex("InterviewRoundId1");
 
                     b.HasIndex("JobApplicationApplicationId");
 
@@ -542,7 +547,8 @@ namespace CampusPlacementAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("DriveDate")
                         .HasColumnType("datetime2");
@@ -852,6 +858,10 @@ namespace CampusPlacementAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("CampusPlacementAPI.Models.InterviewRound", null)
+                        .WithMany("InterviewSchedules")
+                        .HasForeignKey("InterviewRoundId1");
+
                     b.HasOne("CampusPlacementAPI.Models.JobApplication", null)
                         .WithMany("InterviewSchedules")
                         .HasForeignKey("JobApplicationApplicationId");
@@ -1061,6 +1071,11 @@ namespace CampusPlacementAPI.Migrations
                     b.Navigation("CompanyHRs");
 
                     b.Navigation("JobOpenings");
+                });
+
+            modelBuilder.Entity("CampusPlacementAPI.Models.InterviewRound", b =>
+                {
+                    b.Navigation("InterviewSchedules");
                 });
 
             modelBuilder.Entity("CampusPlacementAPI.Models.JobApplication", b =>

@@ -1,4 +1,5 @@
 using CampusPlacementAPI.Data;
+using CampusPlacementAPI.Middlewares;
 using CampusPlacementAPI.Models;
 using CampusPlacementAPI.Repositories;
 using CampusPlacementAPI.Repositories.Interfaces;
@@ -55,33 +56,27 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// 4. Dependency Injection: Repositories & Services (College Slice & Future Models)
+// 4. Dependency Injection: Repositories & Services
 builder.Services.AddScoped<ICollegeRepository, CollegeRepository>();
 builder.Services.AddScoped<ICollegeService, CollegeService>();
-
 builder.Services.AddScoped<IPlacementOfficerRepository, PlacementOfficerRepository>();
 builder.Services.AddScoped<IPlacementOfficerService, PlacementOfficerService>();
-
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<ICompanyHRRepository, CompanyHRRepository>();
 builder.Services.AddScoped<ICompanyHRService, CompanyHRService>();
-
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
-
 builder.Services.AddScoped<IJobOpeningRepository, JobOpeningRepository>();
 builder.Services.AddScoped<IJobOpeningService, JobOpeningService>();
-
 builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
-
 builder.Services.AddScoped<IRecruitmentDriveRepository, RecruitmentDriveRepository>();
 builder.Services.AddScoped<IRecruitmentDriveService, RecruitmentDriveService>();
-
+builder.Services.AddScoped<IInterviewRepository, InterviewRepository>();
+builder.Services.AddScoped<IInterviewService, InterviewService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 
 // 5. Controllers and OpenAPI / Scalar Documentation
@@ -91,7 +86,16 @@ builder.Services.AddOpenApi(); // Built-in OpenAPI document generator (.NET 9/10
 
 var app = builder.Build();
 
-// 6. HTTP Request Pipeline Middleware
+// 6. Seed Roles and SuperAdmin user on startup
+using (var scope = app.Services.CreateScope())
+{
+    await DbInitializer.SeedRolesAndSuperAdminAsync(scope.ServiceProvider);
+}
+
+// 7. HTTP Request Pipeline Middleware
+// Register Global Exception Handling Middleware FIRST to catch all downstream exceptions
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -107,7 +111,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
