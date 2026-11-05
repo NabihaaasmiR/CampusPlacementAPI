@@ -70,6 +70,9 @@ builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<ICompanyHRRepository, CompanyHRRepository>();
 builder.Services.AddScoped<ICompanyHRService, CompanyHRService>();
 
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+
 // 5. Controllers and OpenAPI / Scalar Documentation
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
