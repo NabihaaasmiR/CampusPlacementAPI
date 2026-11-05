@@ -1,0 +1,18 @@
+﻿using CampusPlacementAPI.Models;
+
+namespace CampusPlacementAPI.DTOs.JobApplications
+{
+    public class JobApplicationResponseDto
+    {
+        public int ApplicationId { get; set; }
+        public int JobId { get; set; }
+        public string JobTitle { get; set; } = string.Empty;
+        public int StudentId { get; set; }
+        public string StudentName { get; set; } = string.Empty;
+        public string RegisterNumber { get; set; } = string.Empty;
+        public DateTime AppliedAt { get; set; }
+        public ApplicationStatus Status { get; set; }
+        public string? ResumeUrl { get; set; }
+        public DateTime LastUpdatedAt { get; set; }
+    }
+}

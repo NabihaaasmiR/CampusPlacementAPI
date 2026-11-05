@@ -1,15 +1,28 @@
 ﻿using CampusPlacementAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace CampusPlacementAPI.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        // Parameterless constructor for design-time migration tools
+        public ApplicationDbContext()
+        {
+        }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+        }
+
+        // Design-time fallback to prevent provider configuration errors during migrations
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=CampusPlacementDb;Trusted_Connection=True;MultipleActiveResultSets=true");
+            }
         }
 
         public DbSet<College> Colleges => Set<College>();
@@ -82,7 +95,20 @@ namespace CampusPlacementAPI.Data
                 .HasForeignKey(s => s.PlacementOfficerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // --- 4. Job Target Colleges & Applications ---
+            // --- 4. Job Openings & HR Relationships ---
+            builder.Entity<JobOpening>()
+                .HasOne(j => j.Company)
+                .WithMany()
+                .HasForeignKey(j => j.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<JobOpening>()
+                .HasOne(j => j.CreatedByHR)
+                .WithMany()
+                .HasForeignKey(j => j.CreatedByHRId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // --- 5. Job Target Colleges & Applications ---
             builder.Entity<JobTargetCollege>()
                 .HasOne(jt => jt.JobOpening)
                 .WithMany(j => j.JobTargetColleges)
@@ -106,6 +132,38 @@ namespace CampusPlacementAPI.Data
                 .WithMany(j => j.JobApplications)
                 .HasForeignKey(ja => ja.JobId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // --- 6. Interview Rounds & Schedules ---
+            builder.Entity<InterviewRound>()
+                .HasOne(ir => ir.JobOpening)
+                .WithMany()
+                .HasForeignKey(ir => ir.JobId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<InterviewSchedule>()
+                .HasOne(isched => isched.JobApplication)
+                .WithMany()
+                .HasForeignKey(isched => isched.ApplicationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<InterviewSchedule>()
+                .HasOne(isched => isched.InterviewRound)
+                .WithMany()
+                .HasForeignKey(isched => isched.InterviewRoundId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // --- 7. Application Status History ---
+            builder.Entity<ApplicationStatusHistory>()
+                .HasOne(ash => ash.JobApplication)
+                .WithMany()
+                .HasForeignKey(ash => ash.ApplicationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ApplicationStatusHistory>()
+                .HasOne(ash => ash.UpdatedByUser)
+                .WithMany()
+                .HasForeignKey(ash => ash.UpdatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
