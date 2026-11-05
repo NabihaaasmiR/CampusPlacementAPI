@@ -59,6 +59,12 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<ICollegeRepository, CollegeRepository>();
 builder.Services.AddScoped<ICollegeService, CollegeService>();
 
+builder.Services.AddScoped<IPlacementOfficerRepository, PlacementOfficerRepository>();
+builder.Services.AddScoped<IPlacementOfficerService, PlacementOfficerService>();
+
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 // 5. Controllers and OpenAPI / Scalar Documentation
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
